@@ -25,7 +25,18 @@ interface Pathway {
   environmentalBenefit: string
 }
 
-export default function RecommendationPage() {
+import { Suspense } from "react"
+
+export default function Page() {
+  return (
+    <Suspense fallback={<div>Loading facilities...</div>}>
+      <RecommendationPage />
+    </Suspense>
+  )
+}
+
+
+function RecommendationPage() {
   const searchParams = useSearchParams()
   const [isLoading, setIsLoading] = useState(true)
   
