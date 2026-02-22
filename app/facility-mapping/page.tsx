@@ -1,3 +1,4 @@
+
 'use client'
 
 import { Card } from '@/components/ui/card'
@@ -5,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { ArrowLeft, MapPin, Phone, Mail, TrendingUp, Zap, Leaf, Users, CheckCircle } from 'lucide-react'
 import Link from 'next/link'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { getStateNames, getStateByName, getDistrictCoordinates } from '@/lib/india-geography'
 import { facilitiesDatabase, getNearestFacility, calculateDistance } from '@/lib/facilities-database'
@@ -26,12 +27,26 @@ interface Facility {
   email: string
   pathwaysSupported: string[]
 }
+import { Suspense } from "react"
 
-export default function FacilityMappingPage() {
+export default function Page() {
+  return (
+    <Suspense fallback={<div>Loading facilities...</div>}>
+      <FacilityMappingPage />
+    </Suspense>
+  )
+}
+
+function FacilityMappingPage() {
   const searchParams = useSearchParams()
   const urlPathway = searchParams.get('pathway') || 'all'
   const urlState = searchParams.get('state') || ''
   const urlDistrict = searchParams.get('district') || ''
+  useEffect(() => {
+  setSelectedState(urlState || '')
+  setSelectedDistrict(urlDistrict || '')
+  setSelectedPathway(urlPathway || 'all')
+}, [urlState, urlDistrict, urlPathway])
 
   const stateNames = getStateNames()
   
