@@ -9,7 +9,7 @@ import Link from 'next/link'
 import { useState, useMemo, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { getStateNames, getStateByName, getDistrictCoordinates } from '@/lib/india-geography'
-import { facilitiesDatabase, getNearestFacility, calculateDistance } from '@/lib/facilities-database'
+import { facilitiesDatabase, calculateDistance } from '@/lib/facilities-database'
 
 interface Facility {
   id: string
@@ -17,8 +17,7 @@ interface Facility {
   state: string
   district: string
   city: string
-  latitude: number
-  longitude: number
+  link: string
   type: string
   wasteTypesAccepted: string[]
   processingCapacity: string
@@ -86,19 +85,19 @@ function FacilityMappingPage() {
   }, [selectedState, selectedDistrict, selectedPathway])
 
   // Calculate nearest facility (always, outside of conditional)
-  const nearestFacility = useMemo(() => {
-    if (!selectedState) {
-      // Default to India center if no state selected
-      return getNearestFacility(20.5937, 78.9629)
-    }
+  // const nearestFacility = useMemo(() => {
+  //   if (!selectedState) {
+  //     // Default to India center if no state selected
+  //     return getNearestFacility(20.5937, 78.9629)
+  //   }
     
-    // Get actual district coordinates if selected
-    const coords = selectedDistrict 
-      ? getDistrictCoordinates(selectedState, selectedDistrict)
-      : { latitude: 20.5937, longitude: 78.9629 }
+  //   // Get actual district coordinates if selected
+  //   const coords = selectedDistrict 
+  //     ? getDistrictCoordinates(selectedState, selectedDistrict)
+  //     : { latitude: 20.5937, longitude: 78.9629 }
     
-    return getNearestFacility(coords.latitude, coords.longitude, selectedDistrict)
-  }, [selectedState, selectedDistrict])
+  //   return getNearestFacility(coords.latitude, coords.longitude, selectedDistrict)
+  // }, [selectedState, selectedDistrict])
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -248,7 +247,7 @@ function FacilityMappingPage() {
 
                     {/* View Location Button */}
                     <div className="pt-4 border-t border-border">
-                      <Link href={`https://maps.google.com/?q=${facility.latitude},${facility.longitude}`} target="_blank" className="w-full">
+                      <Link href={facility.link} target="_blank" className="w-full">
                         <Button className="w-full bg-primary hover:bg-primary/90">
                           View on Google Maps
                         </Button>
